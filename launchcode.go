@@ -1,36 +1,34 @@
 package main
 
-import "os/exec"
-import "fmt"
+import (
+	"fmt"
+	"os/exec"
+	"time"
+)
 
-/*
-#!/bin/bash
-echo -n "Current compositing state: "
-qdbus org.kde.kwin /KWin compositingActive
-echo -n "Changing compositing state..."
-qdbus org.kde.kwin /KWin toggleCompositing
-echo -n "Current compositing state: "
-qdbus org.kde.kwin /KWin compositingActive
-echo -n "All done. Press ENTER to close window: "
-read ENTRY
-*/
 func main() {
-	/*binary, lookErr := exec.LookPath("ls")
-	if lookErr != nil {
-		panic(lookErr)
+	qdbus, qbusLookPathErr := exec.LookPath("qdbus")
+	suspendArgs := "org.kde.KWin /Compositor suspend"
+	resumeArgs := "org.kde.KWin /Compositor resume"
+
+	if qbusLookPathErr != nil {
+		panic(qbusLookPathErr)
 	}
 
-	args := []string{"ls", "-a", "-l", "-h"}
-	env := os.Environ()
+	fmt.Println("Let's get this started...")
 
-	execErr := syscall.Exec(binary, args, env)
-	if execErr != nil {
-		panic(execErr)
-	}*/
-	binary, lookErr := exec.LookPath("qdbus")
-	if lookErr != nil {
-		panic(lookErr)
-	}
+	suspendCommand := exec.Command(qdbus, suspendArgs)
+	suspendErr := suspendCommand.Run()
 
-	fmt.Println(binary)
+	fmt.Println("Suspending: ", suspendErr)
+	time.Sleep(1 * time.Second)
+
+	codeCommand := exec.Command("/opt/visual-studio-code/bin/code")
+	codeCommand.Start()
+
+	time.Sleep(1 * time.Second)
+
+	resumeCommand := exec.Command(qdbus, resumeArgs)
+	resumeErr := resumeCommand.Run()
+	fmt.Println("Resuming: ", resumeErr)
 }
