@@ -7,9 +7,12 @@ import (
 )
 
 func main() {
+	const (
+		suspendArgs = "org.kde.KWin /Compositor suspend"
+		resumeArgs  = "org.kde.KWin /Compositor resume"
+	)
+
 	qdbus, qbusLookPathErr := exec.LookPath("qdbus")
-	suspendArgs := "org.kde.KWin /Compositor suspend"
-	resumeArgs := "org.kde.KWin /Compositor resume"
 
 	if qbusLookPathErr != nil {
 		panic(qbusLookPathErr)
